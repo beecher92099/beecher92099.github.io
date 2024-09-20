@@ -39,6 +39,33 @@
             margin-bottom: 20px;
         }
 
+        .left-align {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .left-align img {
+            margin: 20px 0;
+        }
+
+        @media (min-width: 768px) {
+            .left-align {
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+            }
+
+            .left-align img {
+                max-width: 50%;
+                margin-left: 20px;
+            }
+
+            .left-align .description {
+                max-width: 50%;
+            }
+        }
     </style>
 </head>
 <body>
