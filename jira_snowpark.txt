@@ -1,0 +1,241 @@
+# The Snowpark package is required for Python Worksheets. 
+# You can add more packages by selecting them using the Packages control and then importing them.
+# THIS IS THE ONE TO USE
+
+import snowflake.snowpark as snowpark
+from snowflake.snowpark.functions import col, when, lag, lead, current_timestamp, row_number, coalesce, min, max
+from snowflake.snowpark.types import StringType
+import re
+import uuid
+
+def main(session: snowpark.Session):
+
+    # Generate a unique name for the temporary stage
+    temp_stage_name = f"TEMP_UDF_STAGE_{uuid.uuid4().hex[:8]}"
+    
+    # Check if the stage exists, if not create it
+    stage_exists = session.sql(f"SHOW STAGES LIKE '{temp_stage_name}'").collect()
+    if not stage_exists:
+        session.sql(f"CREATE TEMPORARY STAGE {temp_stage_name}").collect()
+        
+    # Define the UDF functions
+    def extract_from_process_step(detail_text: str) -> str:
+        if "Process Step Changed" in detail_text:
+            match = re.search(r'Process Step Changed.*?From \[(.*?)\]', detail_text)
+            if match:
+                step = match.group(1)
+                # Remove prefix if it starts with a number followed by a dash and a space
+                step = re.sub(r'^\d+ - ', '', step)
+                # Remove prefix if it ends with a colon and a space
+                step = re.sub(r'.*: ', '', step)
+                return step
+        elif "Process Step [" in detail_text:
+            match = re.search(r'Process Step \[.*?\]: (.*)', detail_text)
+            if match:
+                step = match.group(1)
+                # Remove prefix if it starts with a number followed by a dash and a space
+                step = re.sub(r'^\d+ - ', '', step)
+                # Remove prefix if it ends with a colon and a space
+                step = re.sub(r'.*: ', '', step)
+                return step
+        return ""
+
+    
+    def extract_to_process_step(detail_text: str) -> str:
+        if "Process Step Changed" in detail_text:
+            match = re.search(r'Process Step Changed.*?To \[(.*?)\]', detail_text)
+            if match:
+                step = match.group(1)
+                # Remove prefix if it starts with a number followed by a dash and a space
+                step = re.sub(r'^\d+ - ', '', step)
+                # Remove prefix if it ends with a colon and a space
+                step = re.sub(r'.*: ', '', step)
+                return step
+        elif "Process Step [" in detail_text:
+            match = re.search(r'Process Step \[.*?\]: (.*)', detail_text)
+            if match:
+                step = match.group(1)
+                # Remove prefix if it starts with a number followed by a dash and a space
+                step = re.sub(r'^\d+ - ', '', step)
+                # Remove prefix if it ends with a colon and a space
+                step = re.sub(r'.*: ', '', step)
+                return step
+        return ""
+
+    
+    # Register permanent UDFs
+    extract_from_process_step_udf = session.udf.register(
+        func=extract_from_process_step,
+        name="extract_from_udf",
+        return_type=StringType(),
+        input_types=[StringType()],
+        is_permanent=True,
+        stage_location=temp_stage_name,
+        replace=True
+    )
+
+    extract_to_process_step_udf = session.udf.register(
+        func=extract_to_process_step,
+        name="extract_to_udf",
+        return_type=StringType(),
+        input_types=[StringType()],
+        is_permanent=True,
+        stage_location=temp_stage_name,
+        replace=True
+    )
+    
+
+    # Your code goes here, inside the "main" handler.
+    tableName = 'CXIT_DB.CXIT_JIRADATALAKE_BR.JA_EPIC_LOG'
+    df = session.table(tableName)  #.filter(col("language") == 'python')
+
+    # Apply the necessary filters
+    df = df.filter(
+        (col("Detail Text").like('%Process Step Changed%') | col("Detail Text").like('%Epic Created%')) &
+        (col("FK Epic ID") != '-1')
+    )
+
+    # Use the ROW_NUMBER window function to identify duplicates
+    window_spec = snowpark.Window.partition_by("FK Epic ID", "Audit Log ID").order_by("Date Audit Event")
+    df = df.with_column(
+        "ROW_NUM",
+        row_number().over(window_spec)
+    )
+
+    # Filter out the duplicates
+    df = df.filter(col("ROW_NUM") == 1).drop("ROW_NUM")
+
+
+    # Add the EVENT_TYPE column based on the conditions
+    df = df.with_column(
+        "EVENT_TYPE",
+        when(col("Detail Text").like('%Epic Created%'), 'CREATED')
+        .when(col("Detail Text").like('%Process Step Changed%'), 'UPDATED')
+        .otherwise('UNKNOWN')  # Optional: handle cases that don't match either condition
+    )
+
+    # Add the FROM_PROCESS_STEP column for EVENT_TYPE = 'UPDATED' or 'CREATED'
+    df = df.with_column(
+        "FROM_PROCESS_STEP",
+        when((col("EVENT_TYPE") == 'UPDATED') | (col("EVENT_TYPE") == 'CREATED'), extract_from_process_step_udf(col("Detail Text")))
+        .otherwise(None)
+    )
+
+    # Add the TO_PROCESS_STEP column for EVENT_TYPE = 'UPDATED' or 'CREATED'
+    df = df.with_column(
+        "TO_PROCESS_STEP",
+        when((col("EVENT_TYPE") == 'UPDATED') | (col("EVENT_TYPE") == 'CREATED'), extract_to_process_step_udf(col("Detail Text")))
+        .otherwise(None)
+    )
+
+
+    # Filter out rows where EVENT_TYPE = 'CREATED' and FROM_PROCESS_STEP is an empty string
+    df = df.filter(~((col("EVENT_TYPE") == 'CREATED') & (col("FROM_PROCESS_STEP") == "")))
+
+    # Define the list of EPIC IDs to filter on
+    # epic_ids = ['9952', '9631', '4884','9612']  # Replace with your list of EPIC IDs
+
+    # Filter the results on EPIC_ID
+    # df = df.filter(col("FK Epic ID").isin(epic_ids))
+
+
+    # Select the required columns and rename them
+    df = df.select(
+        col("FK Epic ID").alias("EPIC_ID"),
+        col("Date Audit Event").alias("DATE_AUDIT_EVENT"),
+        col("Detail Text").alias("DETAIL_TEXT"),
+        col("EVENT_TYPE"),
+        col("FROM_PROCESS_STEP"),
+        col("TO_PROCESS_STEP")
+    )
+
+    # Sort the data by EPIC_ID and DATE_AUDIT_EVENT
+    df = df.sort(col("EPIC_ID"), col("DATE_AUDIT_EVENT"))
+
+    # Create or replace a view with the resulting DataFrame
+    view_name = "CX_DB.CX_OMEGABI_BR.BR_CLPM_PROCESS_STEP_FROM_TO_SP"
+    df.create_or_replace_view(view_name)
+
+
+    # Create a new DataFrame with the required columns
+    df_transformed = df.select(
+        col("EPIC_ID"),
+        col("DATE_AUDIT_EVENT").alias("START"),
+        col("TO_PROCESS_STEP").alias("PROCESS_STEP")
+    )
+
+    # Use window functions to calculate the end times for each PROCESS_STEP
+    window_spec = snowpark.Window.partition_by("EPIC_ID").order_by("START")
+    df_transformed = df_transformed.with_column(
+        "END",
+        lead("START").over(window_spec)
+    )
+
+    # Set the end date to the current date for the latest timestamp
+    df_transformed = df_transformed.with_column(
+        "END",
+        when(col("END").is_null(), current_timestamp()).otherwise(col("END"))
+    )
+
+    # Determine the FULL_PERIOD column based on the presence of valid start and end dates
+    df_transformed = df_transformed.with_column(
+        "FULL_PERIOD",
+        when(col("END") == current_timestamp(), "N").otherwise("Y")
+    )
+    
+    
+    # Identify and group consecutive rows with the same PROCESS_STEP
+    df_transformed = df_transformed.with_column(
+        "PREV_PROCESS_STEP",
+        lag("PROCESS_STEP").over(window_spec)
+    ).with_column(
+        "GROUP",
+        when(col("PROCESS_STEP") != col("PREV_PROCESS_STEP"), row_number().over(window_spec)).otherwise(None)
+    ).with_column(
+        "GROUP",
+        coalesce(col("GROUP"), lag("GROUP", 1).over(window_spec))
+    )
+
+    # Aggregate the grouped rows to get the desired START, END, and FULL_PERIOD values
+    df_transformed = df_transformed.group_by("EPIC_ID", "PROCESS_STEP", "GROUP").agg(
+        min(col("START")).alias("START"),
+        max(col("END")).alias("END"),
+        min(col("FULL_PERIOD")).alias("FULL_PERIOD")
+    )
+
+    # Use window functions to determine the LATEST_PROCESS_STEP
+    latest_window_spec = snowpark.Window.partition_by("EPIC_ID", "PROCESS_STEP").order_by(col("START").desc())
+    df_transformed = df_transformed.with_column(
+        "ROW_NUM",
+        row_number().over(latest_window_spec)
+    ).with_column(
+        "LATEST_PROCESS_STEP",
+        when(col("ROW_NUM") == 1, "Y").otherwise("N")
+    ).drop("ROW_NUM")
+    
+    # Select the required columns and order them
+    df_transformed = df_transformed.select(
+        col("EPIC_ID"),
+        col("PROCESS_STEP"),
+        col("START"),
+        col("END"),
+        col("FULL_PERIOD"),
+        col("LATEST_PROCESS_STEP")
+    ).sort(
+        col("EPIC_ID"), col("START") 
+    )
+
+
+    # Create or replace a view with the resulting DataFrame
+    view_name = "CX_DB.CX_OMEGABI_BR.BR_CLPM_PROCESS_STEP_CHANGES_SP"
+    df_transformed.create_or_replace_view(view_name)
+
+    # Print a message indicating the view has been created
+    print(f"View '{view_name}' has been created successfully.")
+
+    # Return value will appear in the Results tab.
+    return df_transformed
+    
+# Execute the main function
+# session = snowpark.Session.builder.getOrCreate()
+#main(session)
