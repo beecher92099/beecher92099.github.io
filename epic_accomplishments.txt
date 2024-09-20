@@ -1,4 +1,4 @@
-# This script automates the production of formatted html that can be pasted into an email sent out weekly
+# This Python script automates the production of formatted html that can be pasted into an email sent out weekly
 # to summarize the accomplishments of the team working on specific Jira Epics.
 # It obtains the raw data from Excel files hosted on Sharepoint and sync'ed to the local
 # machine running this script.  It parses out the necessary information and then produces the html
