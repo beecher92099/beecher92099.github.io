@@ -39,7 +39,7 @@
             font-size: 1.2em;
             color: #555;
             margin-bottom: 20px;
-            text-align: center;
+            text-align: left;
         }
 
         pre {
@@ -63,16 +63,17 @@
 
 <section>
     <p class="intro">This shows Python code I wrote to automate the production of a PowerPoint slide showing which
-    Epics the team is working on organized by Business Entity (BE) Stakeholder.  The elements are organized by priority and color-coded as a heatmap.</p>
+    Epics the team is working on organized by Business Entity (BE) Stakeholder.  The source data is read from our Snowflake database.
+    The Epics are organized and sorted by priority and color-coded as a heatmap.</p>
 </section>
 
 <section>
-    <h2>Example Image</h2>
+    <h2>PowerPoint Slide Produced</h2>
     <img src="images/epic_ppt_blurred.jpg" alt="PowerPoint Slide">
 </section>
 
 <section>
-    <h2>Python Code Example</h2>
+    <h2>Python Code</h2>
     <pre><code class="language-python">
 import os
 import pandas as pd
