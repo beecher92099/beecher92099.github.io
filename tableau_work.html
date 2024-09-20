@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tableau Work Showcase</title>
-    <style>
+ <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -33,27 +33,27 @@
         }
 
         .description {
-            text-align: center;
             font-size: 1.2em;
             color: #555;
             margin-bottom: 20px;
         }
 
         .left-align {
+            display: block;
             text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
         }
 
+        .left-align h2,
+        .left-align p,
         .left-align img {
+            display: block;
             margin: 20px 0;
         }
 
         @media (min-width: 768px) {
             .left-align {
-                flex-direction: flex;
-                justify-content: column;
+                display: flex;
+                flex-direction: column; /* Ensure content stacks vertically */
                 align-items: flex-start;
             }
 
