@@ -40,6 +40,10 @@
             float: left; /* Ensures the image is aligned left */
         }
 
+        .clear {
+            clear: both; /* Clears the float to ensure the next content appears below */
+        }
+
         .intro {
             font-size: 1.2em;
             color: #555;
@@ -76,6 +80,8 @@
     <h2>PowerPoint Slide Produced</h2>
     <img src="images/epic_ppt_blurred.jpg" alt="PowerPoint Slide">
 </section>
+
+<div class="clear"></div> <!-- This will ensure the code block appears below the image -->
 
 <section>
     <h2>Python Code</h2>
