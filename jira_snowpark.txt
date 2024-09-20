@@ -1,6 +1,9 @@
 # The Snowpark package is required for Python Worksheets. 
 # You can add more packages by selecting them using the Packages control and then importing them.
-# THIS IS THE ONE TO USE
+# This script parses a Jira audit log looking specifically for Process Step change events
+# and then pieces together these events into a final view of the format
+# Epic ID, Process Step, Start, End, Full Period, Latest Process Step
+# Full Period is Y/N flag that indicates if the Process Step has completed or is still in progress
 
 import snowflake.snowpark as snowpark
 from snowflake.snowpark.functions import col, when, lag, lead, current_timestamp, row_number, coalesce, min, max
