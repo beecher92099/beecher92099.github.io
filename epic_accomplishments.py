@@ -1,3 +1,10 @@
+# This script automates the production of formatted html that can be pasted into an email sent out weekly
+# to summarize the accomplishments of the team working on specific Jira Epics.
+# It obtains the raw data from Excel files hosted on Sharepoint and sync'ed to the local
+# machine running this script.  It parses out the necessary information and then produces the html
+# summary in a file, which can be simply pasted into the weekly email.
+# This script accomplishes in a few seconds what was previously taking several hours to complete manually.
+
 import os
 import pandas as pd
 import numpy as np
@@ -62,39 +69,6 @@ focus_areas_order = [
         "Data, Policy & Compliance"
     ]
 
-# Function to generate the email content
-def generate_email_content(df, focus_areas_order):
-    email_content = ""
-    
-   # Group the DataFrame by 'Focus Area'
-    grouped_df = df.groupby('Focus Area')
-    
-    # Iterate through the Focus Areas in the specified order
-    for focus_area in focus_areas_order:
-        if focus_area in grouped_df.groups:
-            email_content += f"## Focus Area: {focus_area}\n\n"  # Add a header for each Focus Area
-            
-            # Get the rows for the current Focus Area and sort by 'One Cisco Backlog'
-            focus_area_df = grouped_df.get_group(focus_area).sort_values(by='Outcome Priority')
-            
-            for index, row in focus_area_df.iterrows():
-                # First line in bold with 'Outcome Priority' info
-                #email_content += f"**{row['Epic Name']} - Epic {row['Epic #']}, P{row['Outcome Priority']}, {row['Commerce PM']}**\n"
-                email_content += f"**{row['Epic Name']} - Epic {row['Epic #']}, {row['Commerce PM']}**\n"
-                
-                # Split the accomplishments by newline and add each as a bullet point
-                accomplishments = row['Accomplishments'].split('\n')
-                for accomplishment in accomplishments:
-                    # Strip any "- " prefix and remove empty lines
-                    cleaned_accomplishment = accomplishment.lstrip('- ').strip()
-                    if cleaned_accomplishment:
-                        email_content += f"- {cleaned_accomplishment}\n"
-                
-                # Blank line separating the next row
-                email_content += "\n"
-    
-    return email_content
-
 # Function to generate the email content in HTML format
 def generate_email_content_html(df, focus_areas_order):
     email_content = "<html><body style='font-family: Calibri; font-size: 12px;'>"
@@ -145,9 +119,6 @@ os.chdir('C:\\Users\\beecher\\Cisco\\Commerce Lifecycle Product Team - Backlog')
 # Save the HTML content to a file
 with open("email_content.html", "w") as file:
     file.write(email_content_html)
-
-# Print the email content
-#print(email_content_html)
 
 #show value of first entry in Accomplishments
 #print(df['Accomplishments'][1])
