@@ -747,7 +747,6 @@ const querystring = require('querystring');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require("uuid");
-//const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
@@ -756,20 +755,10 @@ const connectedAppId = process.env.TABLEAU_CLIENT_ID; //iss
 const connectedAppSecretID = process.env.TABLEAU_CLIENT_SECRET; //kid
 const connectedAppSecret = process.env.TABLEAU_SECRET_VALUE; //secret
 
-// Define CORS options
-//const corsOptions = {
-//  origin: 'https://omega-bi.cisco.com', // Replace with the origin allowed to access your server
-//  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
-//};
-
-// Set up CORS for your Express server
-//app.use(cors(corsOptions));
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   next();
 });
-
 
 app.get('/vizportal/api/web/v1/auth/embed/signin', (req, res) => {
   request(
@@ -912,7 +901,7 @@ app.get('/sso/redirect', async (req, res) => {
   const tokenEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/${authParams.client_id}/token';
   
   const redirectUri = 'https://clpm-bi.cisco.com/sso/redirect';
-  const codeVerifier = req.session.codeVerifier; // The code verifier you generated earlier
+  const codeVerifier = req.session.codeVerifier; // The code verifier generated earlier
   console.log('Session Retrieved Code Verifier: ', codeVerifier);
 
   const postData = querystring.stringify({
