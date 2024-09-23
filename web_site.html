@@ -90,8 +90,7 @@
   <img src="images/clpm_dashboard_1.jpg" alt="Tableau Navigation Framework">
 
   <h2>HTML Code</h2>
-  <pre><code>
-    
+  <pre><code>    
 &lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 
@@ -133,36 +132,205 @@
     &lt;div id=&quot;tableauViz&quot;&gt;&lt;/div&gt;
 
 &lt;/body&gt;
-
 &lt;/html&gt;
-
-    
   </code></pre>
 
   <h2>CSS Code</h2>
   <pre><code>
-  body {
+
+    body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+}
+
+#menu {
+    background-color: #ffffff;
+    padding-left: 5px;
+	border-bottom: 2px solid #d3d3d3;
+	position: relative;
+}
+
+#searchBox {
+    position: absolute;
+    right: 100px;
+    top: 50%;
+    transform: translateY(-30%);
+}
+
+/*#menu::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    bottom: -10px;
+    left: -10px;
+    right: -10px;
+}*/
+
+#logo {
+    height: 30px; 
+    margin-right: 20px; 
+    vertical-align: middle;
+}
+
+/* Top level dropdown */
+.dropdown {
+    color: black;  /* Font color set to black */
+    position: relative;
+    display: inline-block;
+    margin-right: 30px;
+    padding-top: 20px; /* Increase padding to remove any gap */
+	vertical-align: bottom;
+	line-height: inherit;
+}
+
+/* Top-level menu items */
+.dropdown > a {
+    color: black;  /* Font color set to black */
+}
+
+.dropdown > a.dropdown-trigger::after {
+    color: gray;
+    content: "▼";  /* Downward triangle character */
+    margin-left: 5px; /* Space between the menu item and triangle */
+    display: inline-block; 
+    vertical-align: middle;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+	z-index: 4;
+}
+
+
+/* Top level dropdown content */
+.dropdown-content {
+	top: 40px; /* Adjust the value as needed */
+    padding-top: 20px; /* Adjust the value as needed */
+    display: none;
+    position: absolute;
+    background-color: #f2f2f2;
+    z-index: 1;
+    min-width: 300px;
+}
+
+.dropdown-content a[id^="dashboard"]:first-child {
+    margin-top: 2px; /* Add margin to create space above the first second-level menu item */
+}
+
+.sub-menu-title {
+	font-weight: bold;
+    padding: 0px 6px; /* Adjusted padding */
+    color: black;
+    text-align: left;
+	text-decoration: none !important;
+
+}
+
+/* Styles for report links under each sub-menu */
+.dropdown-content a[id^="dashboard"] {
+    color: black;
+	padding: 6px 0px 6px 40px; /* Increase vertical separation */
+    display: block;
+}
+
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Prevent underline for top-level menu items on hover */
+.dropdown > a:hover {
+    text-decoration: none;
+}
+
+.dropdown:hover .dropdown-content a[id^="dashboard"] {
+    background-color: #f2f2f2;
+}
+
+.dropdown:hover .dropdown-content a[id^="dashboard"]:hover {
+    background-color: #e6e6e6;
+}
+#tableauViz {
+    padding: 10px;
+    width: 100%; /* Adjust as per your requirement */
+    height: 2000px; /* Adjust based on the expected size of your tableau dashboard */
+}
+
+tableau-viz {
+    justify-content: flex-start;
+}
+
+a {
+    text-decoration: none;
+    color: #007BFF;
+    cursor: pointer;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+* {
     margin: 0;
-    padding: 20px;
-  }
+    padding: 0;
+    box-sizing: border-box;
+}
 
-  h1 {
-    color: #2c3e50;
-  }
+#email-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-30%);
+    color: black; /* Or whichever color you prefer */
+}
 
-  p {
-    font-size: 1.2em;
-  }
-  </code></pre>
+#home-icon {
+    height: 24px; 
+    margin-right: 20px; 
+    /*top: 100%;*/
+    /*transform: translateY(35%);*/
+    vertical-align: middle;
+    color: black; /* Or whichever color you prefer */
+}
 
-  <h2>JavaScript Code</h2>
-  <pre><code>
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('Website loaded successfully!');
-  });
+a[href='https://clpm-bi.cisco.com/']:hover {
+    text-decoration: none;
+}
+
+body.home-screen {
+    background-color: #0d274c;
+}
+
+#breadcrumb {
+    margin: 10px 0;  /* Adds space above and below the breadcrumb */
+    font-size: 0.8em;  /* Makes the font smaller */
+    color: gray;  /* Makes the text color gray */
+    padding-left: 10px;  /* Adds some space to the left of the breadcrumb */
+}
+
+#results {
+    position: absolute;
+    right: 150px; /* align the right edge with the right edge of the searchBox */
+	z-index: 1000; /* higher than the z-index (if any) of #tableauViz */
+    top: 120%; /* position just below the searchBox */
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 600px; /* you can adjust this value to your needs */
+}
+
+.hasResults {
+    border: 1px solid #ccc;
+    background: white;
+}
+
+#results a {
+    display: block;
+    margin-bottom: 5px;
+}
+
+
+
+
+    
   </code></pre>
 
 </body>
