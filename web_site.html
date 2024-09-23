@@ -698,6 +698,357 @@ function searchReports(searchTerm, menuData) {
 
     
   </code></pre>	
+
+
+<!-- ------------------------------------------------------------ -->
+	
+<h2>PHP Code</h2>
+<pre><code>
+&lt;?php
+    header(&#39;Content-Type: application/json&#39;);
+
+    // Path to the CSV file
+    $csvFile = &#39;omega_bi_menu.csv&#39;;
+    
+    // Open the CSV file
+    $fileHandle = fopen($csvFile, &#39;r&#39;);
+    
+    // Initialize an array to hold our CSV data
+    $data = [];
+    
+    // Fetch the CSV headers and trim any whitespace
+    $headers = array_map(&#39;trim&#39;, fgetcsv($fileHandle));
+    
+    // Loop through the rest of the rows in the CSV file
+    while (($row = fgetcsv($fileHandle)) !== false) {
+        // Combine the headers with the row data
+        $data[] = array_combine($headers, $row);
+    }
+    
+    // Close the file handle
+    fclose($fileHandle);
+    
+    // Output the data as JSON
+    echo json_encode($data);
+?&gt;
+   
+</code></pre>	
+
+<!-- ------------------------------------------------------------ -->
+	
+<h2>App JavaScript Code</h2>
+<pre><code>
+const crypto = require('crypto');
+const express = require('express');
+const session = require('express-session');
+const querystring = require('querystring');
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require("uuid");
+//const cors = require('cors');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const app = express();
+
+const connectedAppId = process.env.TABLEAU_CLIENT_ID; //iss
+const connectedAppSecretID = process.env.TABLEAU_CLIENT_SECRET; //kid
+const connectedAppSecret = process.env.TABLEAU_SECRET_VALUE; //secret
+
+// Define CORS options
+//const corsOptions = {
+//  origin: 'https://omega-bi.cisco.com', // Replace with the origin allowed to access your server
+//  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+//};
+
+// Set up CORS for your Express server
+//app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
+
+app.get('/vizportal/api/web/v1/auth/embed/signin', (req, res) => {
+  request(
+    { url: 'https://tableau.cisco.com/vizportal/api/web/v1/auth/embed/signin' },
+    (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        return res.status(500).json({ type: 'error', message: err.message });
+      }
+
+      res.json(JSON.parse(body));
+    }
+  )
+});
+
+
+// Trust all proxies - use with caution
+app.set('trust proxy', true);
+
+// Session middleware setup
+app.use(session({
+  secret: 'wrbJM0gMPKfXyy4c6o8+m52v/EBt21M6IufLMp1T+6k=', // A secret key used to sign the session ID cookie
+  resave: false, 
+  saveUninitialized: true, 
+  cookie: { secure: true,
+            httpOnly: true}
+}));
+
+function getCurrentTimestamp() {
+  const now = new Date();
+  return now.toTimeString().split(' ')[0]; // Gets the HH:MM:SS part of the toTimeString
+}
+
+function logWithTimestamp(...messages) {
+  console.log(`[${getCurrentTimestamp()}]`, ...messages);
+}
+
+// Function to get Tableau Token
+
+function getTableauToken(iss, kid, secret, userName) {
+  const currentTime = Math.floor(Date.now() / 1000);
+  const tokenExpiryInMinutes = 10;
+  console.log('getTableauToken user =', userName);
+
+  const payload = {
+    "jti": uuidv4(),
+    "aud": "tableau",
+    "sub": userName,
+    "scp": ["tableau:views:embed"],
+    "nbf": currentTime - 100,
+    "exp": currentTime + tokenExpiryInMinutes * 60
+  };
+
+  const header = {
+    "alg": "HS256",
+    "typ": "JWT",
+    "kid": kid,
+    "iss": iss  // Non-standard placement of 'iss' in the header
+  };
+
+  // Encode the JWT with the given secret key
+  const jwtToken = jwt.sign(payload, secret, { header, noTimestamp: true });
+
+  return jwtToken;
+}
+
+// simple utility function to do base64-url encoding
+function base64urlEncode(buffer) {
+  return buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+// Function to generate a random string for the code verifier
+function generateCodeVerifier(length = 128) {
+  const possibleCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  let verifier = '';
+  for (let i = 0; i < length; i++) {
+    verifier += possibleCharacters.charAt(Math.floor(Math.random() * possibleCharacters.length));
+  }
+  return verifier;
+}
+
+// Function to generate the code challenge from the code verifier
+function generateCodeChallenge(verifier) {
+  return base64urlEncode(crypto.createHash('sha256').update(verifier).digest());
+  //return crypto.createHash('sha256').update(verifier).digest().toString('base64url');
+}
+
+// Function to redirect user to authorization endpoint
+function redirectToAuthorizationEndpoint(req, res) {
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = generateCodeChallenge(codeVerifier);
+
+  // Store the code verifier in the session or a cookie to use later
+  req.session.codeVerifier = codeVerifier; // Make sure you have session middleware set up
+  console.log('Code Verifier: ', codeVerifier);
+  console.log('Session Stored Code Verifier: ', req.session.codeVerifier);
+
+  // Store the code challenge in the session to use later
+  req.session.codeChallenge = codeChallenge;
+  console.log('Session Stored Code Challenge: ', req.session.codeChallenge);
+
+  const authParams = {
+    response_type: 'code',
+    client_id: 'DIQWROZS0QPEICM6FM8Q',
+    redirect_uri: 'https://clpm-bi.cisco.com/sso/redirect', 
+    scope: 'openid',
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256'
+  };
+
+
+  const authUrl = `https://sso-dbbfec7f.sso.duosecurity.com/oidc/DIQWROZS0QPEICM6FM8Q/authorize?${querystring.stringify(authParams)}`;
+
+  // Redirect the user to the authorization endpoint
+  res.redirect(authUrl);
+}
+
+// Define a route that initiates the PKCE flow---------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------
+app.get('/auth', (req, res) => {
+  logWithTimestamp('/auth fired.....................');
+  // Save the returnUrl in the session before redirecting to the SSO server
+  const returnUrl = req.query.returnUrl;
+  req.session.returnUrl = returnUrl;
+  console.log('Return Url Saved:', req.session.returnUrl);
+
+  // Call the function to handle the redirect to the authorization endpoint
+  redirectToAuthorizationEndpoint(req, res);
+});
+
+// Route that handles the redirect from the authorization server-----------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------
+app.get('/sso/redirect', async (req, res) => {
+  // Extract the authorization code from the query string
+  logWithTimestamp('/sso/redirect fired...................');
+  const code = req.query.code;
+	console.log('sso redirect code is:', req.query.code);
+
+  // Prepare the data for the token exchange
+  const tokenEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/DIQWROZS0QPEICM6FM8Q/token';
+  const clientId = 'DIQWROZS0QPEICM6FM8Q';
+  const redirectUri = 'https://clpm-bi.cisco.com/sso/redirect';
+  const codeVerifier = req.session.codeVerifier; // The code verifier you generated earlier
+  console.log('Session Retrieved Code Verifier: ', codeVerifier);
+
+  const postData = querystring.stringify({
+    grant_type: 'authorization_code',
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    code: code,
+    code_verifier: codeVerifier,
+  });
+
+  // Set up the POST request headers
+  const config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  };
+
+  try {
+    // Make the POST request to exchange the authorization code for an access token
+    const response = await axios.post(tokenEndpoint, postData, config);
+    console.log('Access Token:', response.data.access_token);
+    req.session.accessToken = response.data.access_token;
+
+    // Now that we have the access token, we get the user info
+    const userinfoEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/DIQWROZS0QPEICM6FM8Q/userinfo';
+
+
+    // Set up the headers for the GET request
+    const headers = {
+        'Authorization': `Bearer ${response.data.access_token}`
+    };
+
+   // Make the GET request to retrieve the user information
+   const userinfoResponse = await axios.get(userinfoEndpoint, { headers });
+   console.log('User information:', userinfoResponse.data);
+   console.log('User is:', userinfoResponse.data.user);
+
+   // Store the user in the session
+   req.session.user = userinfoResponse.data.user;
+	      
+   // Save the session explicitly to ensure the session
+   // is saved before the next asynchronous operation or sending a response
+   await new Promise((resolve, reject) => {
+      req.session.save(err => {
+        if (err) {
+          console.error('Error saving the session:', err);
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+   });
+
+   // Get the Tableau Token
+   const token = getTableauToken(connectedAppId, connectedAppSecretID, connectedAppSecret, req.session.user);
+   console.log("Generated JWT Token:", token);
+ 
+   // Store the Tableau Token
+   req.session.token = token;
+
+   // Redirect the user
+   const redirectUrl = req.session.returnUrl;
+   res.redirect(redirectUrl);
+
+  } catch (error) {
+    // Handle any errors from either the token exchange or the userinfo request
+    console.error('Error:', error.response ? error.response.data : error.message);
+    res.status(500).send('Error processing the request');
+  }
+});
+
+
+// Check if the user has a valid session---------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------
+app.get('/check-session', (req, res) => {
+  logWithTimestamp('Check Session Fired............................................................');
+	console.log('Cookies:', req.headers.cookie); // Logs the cookie header from the request
+	console.log('req.session=',req.session);
+	console.log('req.session.user=',req.session.user);
+	console.log('req.session.token=', req.session.token);
+  if (req.session && req.session.user) { 
+    // The user is logged in, return a positive response
+    res.json({ isValidSession: true, tableauToken: req.session.token });
+  } else {
+    // The user is not logged in, return a negative response
+    res.json({ isValidSession: false });
+  }
+});
+
+// Get new token----------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------
+app.get('/get-new-token', (req, res) => {
+  logWithTimestamp('Get New Token Fired............................................................');
+  // Get the Tableau Token
+  if (typeof req.session.user !== 'undefined') {
+    const token = getTableauToken(connectedAppId, connectedAppSecretID, connectedAppSecret, req.session.user);
+    console.log("New Generated JWT Token:", token);
+
+     // Store the Tableau Token
+     req.session.token = token;
+     res.json({tableauToken: req.session.token});
+   } else {
+     // req.session.user is undefined, handle the error
+     console.error('req.session.user is undefined');
+     // Send an appropriate error response
+     res.status(400).json({ error: 'User session is not available. Authentication required.' });
+   }
+
+});
+
+// Proxy endpoint
+app.get('/tableau-api-proxy', (req, res) => {
+  // URL to the Tableau JavaScript file
+  logWithTimestamp('/tableau-api-proxy fired.....................');
+  const tableauApiUrl = 'https://tableau.cisco.com/javascripts/api/tableau.embedding.3.latest.min.js';
+
+  axios({
+    method: 'get',
+    url: tableauApiUrl,
+    responseType: 'stream',
+    timeout: 60000
+  })
+  .then(response => {
+    response.data.pipe(res);
+  })
+  .catch(error => {
+    console.error(error);
+    res.status(500).send('Error occurred while fetching Tableau JavaScript API.');
+  });
+});
+
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+   
+</code></pre>	
 	
 
 </body>
