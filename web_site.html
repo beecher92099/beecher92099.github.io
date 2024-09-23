@@ -44,7 +44,7 @@
     }
     ul li {
       margin: 5px 0;
-      color: darkgray;
+      color: #2c2c2c;
     }
   </style>
 </head>
@@ -790,7 +790,7 @@ app.set('trust proxy', true);
 
 // Session middleware setup
 app.use(session({
-  secret: 'wrbJM0gMPKfXyy4c6o8+m52v/EBt21M6IufLMp1T+6k=', // A secret key used to sign the session ID cookie
+  secret: process.env.SESSION_SECRET_VALUE, // A secret key used to sign the session ID cookie
   resave: false, 
   saveUninitialized: true, 
   cookie: { secure: true,
@@ -872,7 +872,7 @@ function redirectToAuthorizationEndpoint(req, res) {
 
   const authParams = {
     response_type: 'code',
-    client_id: 'DIQWROZS0QPEICM6FM8Q',
+    client_id: process.env.SSO_CLIENT_ID,
     redirect_uri: 'https://clpm-bi.cisco.com/sso/redirect', 
     scope: 'openid',
     code_challenge: codeChallenge,
@@ -880,7 +880,7 @@ function redirectToAuthorizationEndpoint(req, res) {
   };
 
 
-  const authUrl = `https://sso-dbbfec7f.sso.duosecurity.com/oidc/DIQWROZS0QPEICM6FM8Q/authorize?${querystring.stringify(authParams)}`;
+  const authUrl = `https://sso-dbbfec7f.sso.duosecurity.com/oidc/${authParams.client_id}/authorize?${querystring.stringify(authParams)}`;
 
   // Redirect the user to the authorization endpoint
   res.redirect(authUrl);
@@ -908,8 +908,9 @@ app.get('/sso/redirect', async (req, res) => {
 	console.log('sso redirect code is:', req.query.code);
 
   // Prepare the data for the token exchange
-  const tokenEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/DIQWROZS0QPEICM6FM8Q/token';
-  const clientId = 'DIQWROZS0QPEICM6FM8Q';
+  const clientId = process.env.SSO_CLIENT_ID;
+  const tokenEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/${authParams.client_id}/token';
+  
   const redirectUri = 'https://clpm-bi.cisco.com/sso/redirect';
   const codeVerifier = req.session.codeVerifier; // The code verifier you generated earlier
   console.log('Session Retrieved Code Verifier: ', codeVerifier);
@@ -936,7 +937,7 @@ app.get('/sso/redirect', async (req, res) => {
     req.session.accessToken = response.data.access_token;
 
     // Now that we have the access token, we get the user info
-    const userinfoEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/DIQWROZS0QPEICM6FM8Q/userinfo';
+    const userinfoEndpoint = 'https://sso-dbbfec7f.sso.duosecurity.com/oidc/${authParams.client_id}/userinfo';
 
 
     // Set up the headers for the GET request
