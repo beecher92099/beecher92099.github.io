@@ -55,7 +55,7 @@
   navigation to the various Tableau dashboards. This project required:</p>
 
   <ul>
-    <li>Setting up a Linux Server using Cisco's RunOn Service, where virtual machines can be requested/li>
+    <li>Setting up a Linux Server using Cisco's RunOn Service, where virtual machines can be requested</li>
     <li>Installing the necessary Apache web server software and configuration</li>
     <li>Obtaining and installing an SSL certificate to support secure https traffic</li>
     <li>Requesting a custom domain name for the server</li>
@@ -63,6 +63,15 @@
   </ul>
 
   <p>The high level requirements for the web application were as follows:</p>
+
+  <ul>
+    <li>Custom URL for the site, e.g., https://&lt;our_team>&gt;.cisco.com</li>
+    <li>Provide a configurable two-level menu system to navigate to specific reports</li>
+    <li>Menus and dashboard URLs dynamically read from a csv file so no code required for updates</li>
+    <li>Search box to find dashboards based on dashboard title or keywords</li>
+    <li>Handle Single-Sign-On, redirecting to the Cisco SSO portal as needed and return back to site</li>
+    <li>Implement Tableau Connected App feature to establish trust relationship between web server and Tableau server</li>
+  </ul>
 
   <h2>Screenshot</h2>
   <!-- Add the actual path to your screenshot here -->
