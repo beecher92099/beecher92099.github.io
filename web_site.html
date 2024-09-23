@@ -68,9 +68,21 @@
     <li>Custom URL for the site, e.g., https://&lt;our_team>&gt;.cisco.com</li>
     <li>Provide a configurable two-level menu system to navigate to specific reports</li>
     <li>Menus and dashboard URLs dynamically read from a csv file so no code required for updates</li>
+    <li>Display a breadcrumb so the menu path taken for a given dashboard is shown</li>
     <li>Search box to find dashboards based on dashboard title or keywords</li>
     <li>Handle Single-Sign-On, redirecting to the Cisco SSO portal as needed and return back to site</li>
     <li>Implement Tableau Connected App feature to establish trust relationship between web server and Tableau server</li>
+  </ul>
+
+  <p>The project required the following elements:</p>
+
+  <ul>
+    <li>html file: index.html</li>
+    <li>javascript file: scripts.js</li>
+    <li>css file: styles.css</li>
+    <li>application file: apps.js</li>
+    <li>php file: menuData.php</li>
+    <li>csv file to store the menus and dashboard URLs</li>
   </ul>
 
   <h2>Screenshot</h2>
@@ -79,18 +91,52 @@
 
   <h2>HTML Code</h2>
   <pre><code>
-  &lt;!DOCTYPE html&gt;
-  &lt;html lang="en"&gt;
-    &lt;head&gt;
-      &lt;meta charset="UTF-8"&gt;
-      &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-      &lt;title&gt;My Awesome Website&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-      &lt;h1&gt;Welcome to My Awesome Website&lt;/h1&gt;
-      &lt;p&gt;This is a sample website for showcasing my work.&lt;/p&gt;
-    &lt;/body&gt;
-  &lt;/html&gt;
+    
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commerce Lifecycle Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="img/clpt_small.png">
+    <script type="module" src="https://tableau.cisco.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="scripts.js"></script>
+</head>
+
+<body>
+    <div id="menu">
+        <!-- Logo -->
+        <img src="img/clpm_logo_25.gif" alt="CLPM Logo" id="logo">
+
+        <!-- Home Icon -->
+        <a href="https://clpm-bi.cisco.com/">
+            <img src="img/home_icon_2_24px.png" alt="Home" id="home-icon">
+        </a>
+
+        <!-- Search Box -->
+        <input type="text" id="searchBox" placeholder="Search reports..." />
+        <div id="results"></div>
+
+        <!-- Email Icon -->
+        <a href="mailto:clpm-bi@cisco.com" id="email-icon">
+            <img src="img/email_icon_24px.png" alt="Email">
+        </a>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div id="breadcrumb"></div>
+
+    <!-- Tableau Viz placeholder -->
+    <div id="tableauViz"></div>
+
+</body>
+
+</html>
+
+    
   </code></pre>
 
   <h2>CSS Code</h2>
