@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Automated PowerPoint Chart Generation Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        p, ul {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.6;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        code {
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Automated PowerPoint Chart Generation Project Summary</h1>
+    </header>
+
+    <section>
+        <h2>Overview</h2>
+        <p>This Python project automates the creation of a <strong>PowerPoint slide</strong> that displays the active Jira Epics 
+        the team is working on, organized by <strong>Business Entity (BE) Stakeholders</strong>. It retrieves data from 
+        <code>Snowflake</code>, organizes it by priority, and presents it as a color-coded heatmap table in PowerPoint.</p>
+    </section>
+
+    <section>
+        <h2>Key Steps and Workflow</h2>
+        <ul>
+            <li><strong>Database Connection:</strong> Connects to Snowflake using credentials stored in an RData file.</li>
+            <li><strong>Data Preparation:</strong> Fetches active Epics, sorts them by priority, and organizes them by BE Stakeholder.</li>
+            <li><strong>Data Cleaning:</strong> Replaces missing values with 99999, indicating inactive or low-priority Epics.</li>
+            <li><strong>Heatmap Generation:</strong> Uses color-coding to visually represent priority levels, with green shades for high priority and grey for inactive data.</li>
+            <li><strong>PowerPoint Slide Creation:</strong> Adds a table layout, title, and timestamp to the slide using the <code>python-pptx</code> library.</li>
+            <li><strong>Row Limiting:</strong> Ensures a maximum of 8 rows per stakeholder to maintain readability, adding a note if items are hidden.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Purpose of the Project</h2>
+        <p>The goal of this project is to <strong>automate reporting</strong> and eliminate the manual effort involved in creating 
+        PowerPoint dashboards. It saves time, ensures consistency, and provides stakeholders with a clear, up-to-date view of Epic priorities.</p>
+    </section>
+
+    <section>
+        <h2>Output Example</h2>
+        <p>The generated PowerPoint slide will include:</p>
+        <ul>
+            <li>Table headers for each BE stakeholder (e.g., Networking, Finance).</li>
+            <li>Rows of Epics, sorted by priority and color-coded in a heatmap.</li>
+            <li>A note section indicating hidden rows or report limitations.</li>
+            <li>A timestamp at the top right showing when the report was last refreshed.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Conclusion</h2>
+        <p>This project demonstrates the power of <code>Python</code> in automating reporting workflows. It integrates Snowflake for 
+        data access and <code>python-pptx</code> for PowerPoint automation, providing a streamlined, professional solution for tracking 
+        Jira Epics and their priorities.</p>
+    </section>
+</body>
+</html>
