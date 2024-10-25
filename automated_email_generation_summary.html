@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Automated HTML Email Generation Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.6;
+        }
+        ul {
+            margin-top: 0;
+            padding-left: 20px;
+        }
+        code {
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Automated HTML Email Generation Script Summary</h1>
+    </header>
+
+    <section>
+        <h2>Overview</h2>
+        <p>This Python script automates the generation of a formatted HTML email summarizing the weekly accomplishments 
+        of a team working on specific Jira Epics. It pulls raw data from Excel files synchronized from 
+        <strong>SharePoint</strong>, processes the data, and creates an HTML summary that can be pasted directly 
+        into a weekly email.</p>
+    </section>
+
+    <section>
+        <h2>Key Tasks Performed</h2>
+        <ul>
+            <li><strong>Reading Data:</strong> Loads two Excel files with Epic information and focus areas.</li>
+            <li><strong>Merging Data:</strong> Merges the two datasets based on <code>Epic ID</code> to ensure focus areas are aligned.</li>
+            <li><strong>Data Cleaning:</strong> Removes unnecessary rows and fills missing values (e.g., assigns 'No PM Assigned' for missing PMs).</li>
+            <li><strong>Sorting by Priority:</strong> Sorts the Epics by <code>Outcome Priority</code> for proper display order.</li>
+            <li><strong>Generating HTML:</strong> Creates an HTML email summary grouped by focus areas with bullet-pointed accomplishments.</li>
+            <li><strong>Saving Output:</strong> Saves the HTML content to a file for easy use in email communications.</li>
+            <li><strong>Logging:</strong> Appends execution logs to <code>log.txt</code> with timestamps for tracking.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Purpose</h2>
+        <p>The purpose of this script is to <strong>save time</strong> and ensure consistency by automating the 
+        creation of weekly email summaries. What previously took several hours can now be done in seconds, 
+        ensuring smooth and efficient reporting.</p>
+    </section>
+
+    <section>
+        <h2>Output Example</h2>
+        <p>The email generated will include:</p>
+        <ul>
+            <li>Focus Area Headers (e.g., "Commerce Experience")</li>
+            <li>Epic Summary: <code>Epic Name - Epic ID, Outcome #, Assigned PM</code></li>
+            <ul>
+                <li>Accomplishment 1</li>
+                <li>Accomplishment 2</li>
+            </ul>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Conclusion</h2>
+        <p>This script leverages <code>pandas</code> for data handling and ensures quick, consistent output. 
+        It enables teams to generate professional reports without manual formatting, saving valuable time.</p>
+    </section>
+</body>
+</html>
