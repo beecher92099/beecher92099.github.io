@@ -56,15 +56,16 @@
     <section>
         <h2>Overview</h2>
         <p>This Python project automates the creation of a <strong>PowerPoint slide</strong> that displays the active Jira Epics 
-        the team is working on, organized by <strong>Business Entity (BE) Stakeholders</strong>. It retrieves data from 
-        <code>Snowflake</code>, organizes it by priority, and presents it as a color-coded heatmap table in PowerPoint.</p>
+        the team is working on, organized by <strong>Stakeholders</strong>. It retrieves data from 
+        <code>Snowflake</code>, organizes it by priority, and presents it as a color-coded heatmap table in PowerPoint.
+        As the work was done at a previous employer I'm not permitted to share the actual code.</p>
     </section>
 
     <section>
         <h2>Key Steps and Workflow</h2>
         <ul>
             <li><strong>Database Connection:</strong> Connects to Snowflake using credentials stored in an RData file.</li>
-            <li><strong>Data Preparation:</strong> Fetches active Epics, sorts them by priority, and organizes them by BE Stakeholder.</li>
+            <li><strong>Data Preparation:</strong> Fetches active Epics, sorts them by priority, and organizes them by Stakeholder.</li>
             <li><strong>Data Cleaning:</strong> Replaces missing values with 99999, indicating inactive or low-priority Epics.</li>
             <li><strong>Heatmap Generation:</strong> Uses color-coding to visually represent priority levels, with green shades for high priority and grey for inactive data.</li>
             <li><strong>PowerPoint Slide Creation:</strong> Adds a table layout, title, and timestamp to the slide using the <code>python-pptx</code> library.</li>
@@ -75,14 +76,14 @@
     <section>
         <h2>Purpose of the Project</h2>
         <p>The goal of this project is to <strong>automate reporting</strong> and eliminate the manual effort involved in creating 
-        PowerPoint dashboards. It saves time, ensures consistency, and provides stakeholders with a clear, up-to-date view of Epic priorities.</p>
+        a manual PowerPoint dashboards. It saves time, ensures consistency, and provides stakeholders with a clear, up-to-date view of Epic priorities.</p>
     </section>
 
     <section>
         <h2>Output Example</h2>
         <p>The generated PowerPoint slide will include:</p>
         <ul>
-            <li>Table headers for each BE stakeholder (e.g., Networking, Finance).</li>
+            <li>Table headers for each stakeholder</li>
             <li>Rows of Epics, sorted by priority and color-coded in a heatmap.</li>
             <li>A note section indicating hidden rows or report limitations.</li>
             <li>A timestamp at the top right showing when the report was last refreshed.</li>
