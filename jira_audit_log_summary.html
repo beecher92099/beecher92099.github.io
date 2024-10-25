@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jira Audit Log Parsing Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.6;
+        }
+        code {
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Jira Audit Log Parsing Summary</h1>
+    </header>
+    
+    <section>
+        <h2>Overview</h2>
+        <p>This project utilizes the <code>Snowflake Snowpark</code> API to parse Jira audit logs, focusing specifically on 
+        <strong>process step change events</strong>. The goal is to build a structured view that tracks the transitions and statuses 
+        of Jira Epics across various process steps over time.</p>
+    </section>
+
+    <section>
+        <h2>Key Tasks Performed</h2>
+        <ul>
+            <li><strong>Temporary Storage:</strong> A temporary Snowflake stage is created to store and register user-defined functions (UDFs).</li>
+            <li><strong>Extract Process Steps:</strong> UDFs extract "From" and "To" process steps using regular expressions on text fields.</li>
+            <li><strong>Data Filtering:</strong> Loads Jira logs and filters relevant entries, such as process step changes or Epic creation events.</li>
+            <li><strong>Data Enrichment:</strong> Adds event types such as <code>CREATED</code> and <code>UPDATED</code> to categorize changes.</li>
+            <li><strong>Window Functions:</strong> Utilizes window functions to manage duplicates, calculate start and end times, and identify the latest step.</li>
+            <li><strong>Aggregation:</strong> Groups consecutive process steps and aggregates time intervals.</li>
+            <li><strong>View Creation:</strong> Stores the final transformed data in Snowflake views for analysis and monitoring.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Purpose</h2>
+        <p>The code helps track the <strong>progress of Jira Epics</strong> through different stages and identify process bottlenecks. 
+        By analyzing how long each step takes and whether it is complete, teams can monitor workflow efficiency and improve processes.</p>
+    </section>
+
+    <section>
+        <h2>Output</h2>
+        <p>The output is a structured view containing:</p>
+        <ul>
+            <li><code>Epic ID</code></li>
+            <li><code>Process Step</code></li>
+            <li><code>Start</code> and <code>End Times</code></li>
+            <li><code>FULL_PERIOD</code> flag indicating if the step is complete</li>
+            <li><code>LATEST_PROCESS_STEP</code> to mark the most recent step</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Conclusion</h2>
+        <p>This project showcases the use of Snowflake's Snowpark API to efficiently parse and transform data from Jira audit logs, 
+        providing valuable insights into process management and workflow optimization.</p>
+    </section>
+</body>
+</html>
