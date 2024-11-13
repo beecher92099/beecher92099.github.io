@@ -24,6 +24,13 @@
         header p {
             text-align: left;
         }
+   
+        /* Ensure the unordered list is left-aligned */
+        header ul {
+          text-align: left;
+          list-style-position: inside;
+          padding-left: 0; /* Remove any default padding    */
+        }
 
         section {
             margin-bottom: 40px;
@@ -75,8 +82,13 @@
 
 <header>
     <h1>Showcase of Power BI Work</h1>
-    <p class="description">I've taken a number of training courses in Power BI, but have not used it extensivly in my previous roles.  
+    <p class="description">I've taken a number of training courses on Power BI from LinkedIn Learning:  
     </p>
+    <ul>
+        <li>Power BI Essential Training</li>
+        <li>Learning Power BI Desktop</li>
+        <li>Power BI Data Modeling with DAX</li>
+    </ul>
 </header>
 
 <section class="left-align">
@@ -84,6 +96,11 @@
     <p class="description">This dashboard is a quick, simple using the famous Super Store data set from Tableau, that consists of 3 related tables: 
     orders, returns, and people.  The dashboard includes a number of counts across the top row, a bar chart showing order count by region,
     a bar chart of sales by quarter, and a Geo map of the US showing sales by state.</p>
+  
+  <!-- Image for Super Store Dashboard -->
+    <img src="images/superstore_dashboard.png" alt="Super Store Dashboard">
+  
+      <img src="images/superstore_model.png" alt="Super Store Data Model">
 
 </section>
      
