@@ -91,6 +91,8 @@ kubectl get service iris-api-service
   </section>
 
   <section class="section" id="code-snippets">
+
+  <!-- ----------------------------------------------------------------------------------- -->  
     <h2>Code Snippets</h2>
 
         <h3>train_model.py</h3>
@@ -164,6 +166,15 @@ EXPOSE 5000
 # Command to run the application
 CMD ["python", "app.py"]
     </code></pre>
+
+
+    <h3>requirements.txt</h3>
+    <pre><code class="python">
+Flask
+numpy
+scikit-learn==1.3.0
+joblib
+    </code></pre>    
 
     <h3>deployment.yaml</h3>
     <pre><code class="yaml">
