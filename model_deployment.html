@@ -47,26 +47,28 @@
 
   <header>
     <h1>Iris Species Predictor Project</h1>
-    <p>This project combines a machine learning model, Flask API, and Kubernetes deployment for real-time iris species prediction.</p>
   </header>
 
   <section class="section" id="overview">
     <h2>Project Overview</h2>
-    <p>This project demonstrates the deployment of a machine learning model trained on the Iris dataset using Flask, Docker, and Kubernetes on Azure. Users can input measurements to predict the iris species (Setosa, Versicolor, or Virginica).</p>
+    <p>This project demonstrates the deployment of a simple machine learning model trained on the <a href="https://archive.ics.uci.edu/dataset/53/iris target="_blank"">Iris dataset</a> using Flask, Docker, and 
+      Kubernetes on Azure. Users can input measurements to predict the iris species (Setosa, Versicolor, or Virginica).</p>
   </section>
 
   <section class="section" id="project-files">
     <h2>Project Files</h2>
     <ul>
+      <li><strong>train_model.py</strong>: Code to create the basic trained Machine Learning Model</li>
       <li><strong>app.py</strong>: Main Flask application file.</li>
       <li><strong>Dockerfile</strong>: Configuration for creating the Docker image.</li>
+      <li><strong>requirements.txt</strong>: list of external dependencies required to run the project. </li>
       <li><strong>deployment.yaml</strong>: Kubernetes deployment configuration.</li>
     </ul>
   </section>
 
   <section class="section" id="deployment-procedures">
     <h2>Deployment Procedures</h2>
-    <p>Follow these steps to deploy the application:</p>
+    <p>These are the steps to deploy the application:</p>
     <ol>
       <li>Build and push the Docker image:
         <pre><code class="bash">
@@ -80,7 +82,7 @@ kubectl apply -f deployment.yaml
 kubectl rollout status deployment/iris-api
         </code></pre>
       </li>
-      <li>Access the application using the external IP:
+      <li>Identify the external IP address used to access the application:
         <pre><code class="bash">
 kubectl get service iris-api-service
         </code></pre>
@@ -90,6 +92,34 @@ kubectl get service iris-api-service
 
   <section class="section" id="code-snippets">
     <h2>Code Snippets</h2>
+
+        <h3>train_model.py</h3>
+    <pre><code class="python">
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+import joblib
+
+# Load the Iris dataset
+data = load_iris()
+X = data.data
+y = data.target
+
+# Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the Random Forest model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Save the model
+joblib.dump(model, 'iris_model.pkl')
+
+print("Model trained and saved as 'iris_model.pkl'")
+    </code></pre>
+
     <h3>app.py</h3>
     <pre><code class="python">
 from flask import Flask, request, jsonify
