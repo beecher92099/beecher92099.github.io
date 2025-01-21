@@ -195,6 +195,7 @@ spec:
       containers:
       - name: iris-api
         image: beecher92099/iris-api:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
 ---
