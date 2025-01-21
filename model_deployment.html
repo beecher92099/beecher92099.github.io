@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iris Species Predictor Project</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px auto;
+      max-width: 800px;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #0056b3;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    .code {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin: 20px 0;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+    a {
+      color: #0056b3;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Iris Species Predictor Project</h1>
+    <p>This project combines a machine learning model, Flask API, and Kubernetes deployment for real-time iris species prediction.</p>
+  </header>
+
+  <section class="section" id="overview">
+    <h2>Project Overview</h2>
+    <p>This project demonstrates the deployment of a machine learning model trained on the Iris dataset using Flask, Docker, and Kubernetes on Azure. Users can input measurements to predict the iris species (Setosa, Versicolor, or Virginica).</p>
+  </section>
+
+  <section class="section" id="project-files">
+    <h2>Project Files</h2>
+    <ul>
+      <li><strong>app.py</strong>: Main Flask application file.</li>
+      <li><strong>Dockerfile</strong>: Configuration for creating the Docker image.</li>
+      <li><strong>deployment.yaml</strong>: Kubernetes deployment configuration.</li>
+    </ul>
+  </section>
+
+  <section class="section" id="deployment-procedures">
+    <h2>Deployment Procedures</h2>
+    <p>Follow these steps to deploy the application:</p>
+    <ol>
+      <li>Build and push the Docker image:
+        <pre><code class="bash">
+docker build -t beecher92099/iris-api:latest .
+docker push beecher92099/iris-api:latest
+        </code></pre>
+      </li>
+      <li>Deploy to Kubernetes:
+        <pre><code class="bash">
+kubectl apply -f deployment.yaml
+kubectl rollout status deployment/iris-api
+        </code></pre>
+      </li>
+      <li>Access the application using the external IP:
+        <pre><code class="bash">
+kubectl get service iris-api-service
+        </code></pre>
+      </li>
+    </ol>
+  </section>
+
+  <section class="section" id="code-snippets">
+    <h2>Code Snippets</h2>
+    <h3>app.py</h3>
+    <pre><code class="python">
+from flask import Flask, request, jsonify
+import joblib
+
+app = Flask(__name__)
+
+# Load the model
+model = joblib.load('iris_model.pkl')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.json
+    features = [[data['sepal_length'], data['sepal_width'], data['petal_length'], data['petal_width']]]
+    prediction = model.predict(features)
+    species = ['Setosa', 'Versicolor', 'Virginica'][prediction[0]]
+    return jsonify({'species': species})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+    </code></pre>
+
+    <h3>Dockerfile</h3>
+    <pre><code class="dockerfile">
+# Use an official Python runtime as the base image
+FROM python:3.8-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file and application code
+COPY requirements.txt .
+COPY app.py .
+COPY iris_model.pkl .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expose the port Flask runs on
+EXPOSE 5000
+
+# Command to run the application
+CMD ["python", "app.py"]
+    </code></pre>
+
+    <h3>deployment.yaml</h3>
+    <pre><code class="yaml">
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iris-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: iris-api
+  template:
+    metadata:
+      labels:
+        app: iris-api
+    spec:
+      containers:
+      - name: iris-api
+        image: beecher92099/iris-api:latest
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iris-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: iris-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+    </code></pre>
+  </section>
+
+
+</body>
+</html>
