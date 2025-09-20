@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Full Stack Web Application for Factory Module Map</title>
+ <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2em;
+        }
+
+        header p {
+            text-align: left;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .description {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .left-align {
+            display: block;
+            text-align: left;
+        }
+
+        .left-align h2,
+        .left-align p,
+        .left-align img {
+            display: block;
+            margin: 20px 0;
+        }
+
+        @media (min-width: 768px) {
+            .left-align {
+                display: flex;
+                flex-direction: column; /* Ensure content stacks vertically */
+                align-items: flex-start;
+            }
+
+            .left-align img {
+                max-width: 50%;
+            }
+
+            .left-align .description {
+                max-width: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Full Stack Web Application for Factory Module Map</h1>
+    <p class="description">A full-stack web application to allow displaying the location of modules on the factory floor and surrounding site property.  
+Read the inventory of modules for a given project from the Azure SQL database repository.  
+Support 4 location areas for modules: 1) Available, 2) Site Image Area, 3) Stored Offsite, and 4) Delivered.  
+Support the ability drag modules between the 4 locations.  On the Site Image Area support the ability to drag modules to specific locations and 
+rotate modules in 45 degree increments.  Support selecting multiple modules at once and dragging as a group.  
+Support alignment operations on a selected group, left or top alignment, vertical or horizontal equal distribution.  
+Support the ability to search for a specific module and highlight where the module is located.  Support password protected edit mode to enable module location editing.  
+Ability to view module locations in the past (time travel mode).  Ability to undo/redo edits.  Coding was done using Claude Code.</p>
+</header>
+
+<section class="left-align">
+    <h2>Bookings Summary</h2>
+    <p class="description">This dashboard shows the bookings per selected time period (e.g., year, quarter, month, etc.). 
+    Different tables are provided to show various breakdowns of the bookings such as by geography, market segment, product area, etc.
+    Filters are provided for different dimensions in the data.  Absolute bookings are shown along with YoY change.</p>
+    <img src="images/Bookings Summary.png" alt="Bookings vs Linearity">
+</section>
+
+<!--
+<section class="left-align">
+    <h2>Active Subscriptions</h2>
+    <p class="description">This dashboard shows information about Active Subscriptions such as the number of
+    subscriptions, number of distinct customers and partners, and annual and total contract values.  Different
+    breakdowns as provided such as number of subscriptions including SaaS only products.</p>
+</section>
+-->
+
+<section class="left-align">
+    <h2>Bookings vs Forecast</h2>
+    <p class="description">This dashboard shows the weekly bookings versus forecast (cumulative) for the current quarter.
+    The forecast for the quarter is broken up into expected weekly amounts based on historical linearity.  As bookings
+    come in week-by-week, the dashboard shows whether we are above or below linearity and also includes the capability
+    to predict the remaining weeks based on the status of the sales pipeline in Salesforce with configurable 
+    assumptions of what percentage of the pipeline will convert to actual bookings.</p>
+    <img src="images/Bookings vs Forecast Linearity.png" alt="Bookings vs Linearity">
+</section>
+
+<section class="left-align">
+    <h2>Pipeline Movement Waterfall</h2>
+    <p class="description">This dashboard shows the value of the Salesforce opportunity pipeline at the start of the quarter
+    on the left (Initial) along with the Current value of the Pipeline on the right.  A waterfall chart is used to 
+    account for all the changes that occurred increasing the value of the pipeline (in green) vs changes which reduced the value of the
+    pipeline (in red).</p>
+    <img src="images/Pipeline Movement.png" alt="Bookings vs Linearity">
+</section>       
+
+<section class="left-align">
+    <h2>Quarter End Pipeline Outcome</h2>
+    <p class="description">This dashboard uses a Sankey diagram to show what eventually became of active pipeline that was 
+        present in the
+    closing weeks of the quarter.  Each quarter has 13 weeks, so you can for example see what the amount of commit and
+    upside pipeline was present at the start of week 13 and then see what became of that pipeline.  Possibilities include
+    that the pipeline Booked, the expected book date is Overdue, or was Pushed Out to a later date.</p>
+    <img src="images/Pipeline Outcome.png" alt="Bookings vs Linearity">
+</section>    
+
+<section class="left-align">
+    <h2>Epic Process Step Analysis</h2>
+    <p class="description">This dashboard uses box plots to compare how long Jira Epics spend in different
+    process steps.</p>
+      <img src="images/Epic Process Steps.png" alt="Process Step Analysis">
+</section> 
+<!--
+<section class="left-align">
+    <h2>Epic Gantt Chart</h2>
+    <p class="description">This dashboard visually shows via a Gantt Chart how long Epics are spending in 
+    different process steps, making it easy to quickly spot cases where excessive time is spent or if an Epic
+    is going backwards in process steps</p>
+</section>       
+-->
+</body>
+</html>
