@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#c2410c"/></linearGradient></defs>
+  <rect width="960" height="600" fill="url(#g)"/>
+  <g transform="translate(160,110)">
+    <rect x="0" y="0" width="640" height="380" rx="12" fill="#ffffff"/>
+    <text x="28" y="48" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#9a3412">Active Epics by Stakeholder</text>
+    <rect x="28" y="62" width="584" height="3" fill="#fdba74"/>
+    <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+      <rect x="28" y="84" width="150" height="34" fill="#f3f4f6"/><rect x="186" y="84" width="140" height="34" fill="#f3f4f6"/><rect x="334" y="84" width="140" height="34" fill="#f3f4f6"/><rect x="482" y="84" width="130" height="34" fill="#f3f4f6"/>
+      <rect x="28" y="124" width="150" height="34" fill="#15803d"/><rect x="186" y="124" width="140" height="34" fill="#22c55e"/><rect x="334" y="124" width="140" height="34" fill="#86efac"/><rect x="482" y="124" width="130" height="34" fill="#d1d5db"/>
+      <rect x="28" y="164" width="150" height="34" fill="#22c55e"/><rect x="186" y="164" width="140" height="34" fill="#15803d"/><rect x="334" y="164" width="140" height="34" fill="#d1d5db"/><rect x="482" y="164" width="130" height="34" fill="#86efac"/>
+      <rect x="28" y="204" width="150" height="34" fill="#86efac"/><rect x="186" y="204" width="140" height="34" fill="#bbf7d0"/><rect x="334" y="204" width="140" height="34" fill="#22c55e"/><rect x="482" y="204" width="130" height="34" fill="#15803d"/>
+      <rect x="28" y="244" width="150" height="34" fill="#d1d5db"/><rect x="186" y="244" width="140" height="34" fill="#86efac"/><rect x="334" y="244" width="140" height="34" fill="#bbf7d0"/><rect x="482" y="244" width="130" height="34" fill="#22c55e"/>
+      <rect x="28" y="284" width="150" height="34" fill="#bbf7d0"/><rect x="186" y="284" width="140" height="34" fill="#d1d5db"/><rect x="334" y="284" width="140" height="34" fill="#15803d"/><rect x="482" y="284" width="130" height="34" fill="#86efac"/>
+    </g>
+    <text x="28" y="356" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280">Generated with python-pptx from Snowflake</text>
+  </g>
+</svg>

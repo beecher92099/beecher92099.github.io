@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f3d6b"/><stop offset="1" stop-color="#1f7a8c"/></linearGradient></defs>
+  <rect width="960" height="600" fill="url(#g)"/>
+  <g transform="translate(140,110)">
+    <rect x="0" y="0" width="680" height="400" rx="14" fill="#f8fafc"/>
+    <rect x="0" y="0" width="680" height="54" rx="14" fill="#1d4ed8"/>
+    <rect x="0" y="30" width="680" height="24" fill="#1d4ed8"/>
+    <circle cx="26" cy="27" r="7" fill="#93c5fd"/><circle cx="48" cy="27" r="7" fill="#93c5fd"/><circle cx="70" cy="27" r="7" fill="#93c5fd"/>
+    <rect x="110" y="18" width="150" height="18" rx="9" fill="#60a5fa"/>
+    <rect x="280" y="18" width="110" height="18" rx="9" fill="#93c5fd" opacity=".7"/>
+    <rect x="410" y="18" width="110" height="18" rx="9" fill="#93c5fd" opacity=".7"/>
+    <g fill="#ffffff" stroke="#cbd5e1" stroke-width="2">
+      <rect x="30" y="84" width="190" height="130" rx="10"/><rect x="245" y="84" width="190" height="130" rx="10"/><rect x="460" y="84" width="190" height="130" rx="10"/>
+      <rect x="30" y="240" width="190" height="130" rx="10"/><rect x="245" y="240" width="190" height="130" rx="10"/><rect x="460" y="240" width="190" height="130" rx="10"/>
+    </g>
+    <g fill="#e05e2d">
+      <rect x="50" y="150" width="22" height="44"/><rect x="80" y="125" width="22" height="69"/><rect x="110" y="140" width="22" height="54"/><rect x="140" y="110" width="22" height="84"/><rect x="170" y="130" width="22" height="64"/>
+    </g>
+    <polyline points="265,185 300,160 335,170 370,130 405,145" fill="none" stroke="#1d4ed8" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="555" cy="150" r="42" fill="#e05e2d"/><path d="M555 150 L555 108 A42 42 0 0 1 597 150 Z" fill="#1d4ed8"/>
+    <g fill="#1d4ed8"><rect x="50" y="300" width="150" height="10" rx="5" opacity=".8"/><rect x="50" y="320" width="110" height="10" rx="5" opacity=".5"/><rect x="50" y="340" width="130" height="10" rx="5" opacity=".3"/></g>
+    <g fill="#e05e2d"><rect x="265" y="300" width="150" height="10" rx="5" opacity=".8"/><rect x="265" y="320" width="90" height="10" rx="5" opacity=".5"/><rect x="265" y="340" width="120" height="10" rx="5" opacity=".3"/></g>
+    <g fill="#1d4ed8"><rect x="480" y="300" width="150" height="10" rx="5" opacity=".8"/><rect x="480" y="320" width="120" height="10" rx="5" opacity=".5"/><rect x="480" y="340" width="80" height="10" rx="5" opacity=".3"/></g>
+  </g>
+</svg>

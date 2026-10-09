@@ -2,63 +2,406 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>My Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beecher Adams · Portfolio</title>
+  <meta name="description" content="Business analytics and data science portfolio of Beecher Adams: machine learning, dashboards, automation, and full-stack projects.">
   <style>
+    :root {
+      --bg: #f4f6fa;
+      --surface: #ffffff;
+      --ink: #1b2130;
+      --muted: #5b6475;
+      --line: #e3e7ee;
+      --accent: #1f5eff;
+      --accent-ink: #ffffff;
+      --chip: #eef2ff;
+      --chip-ink: #3346a3;
+      --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 8px 24px -12px rgba(16, 24, 40, .18);
+      --shadow-hover: 0 2px 4px rgba(16, 24, 40, .08), 0 18px 36px -14px rgba(16, 24, 40, .28);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f1420;
+        --surface: #182033;
+        --ink: #e8ecf4;
+        --muted: #9aa5ba;
+        --line: #273149;
+        --accent: #7aa2ff;
+        --accent-ink: #0f1420;
+        --chip: #223059;
+        --chip-ink: #b9c8ff;
+        --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+        --shadow-hover: 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -14px rgba(0,0,0,.8);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 20px;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
-    h1 {
-      color: #333;
+    a { color: var(--accent); }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+
+    /* Header */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 10;
     }
-    ul {
-      list-style-type: square;
+    .site-header .wrap {
+      display: flex; align-items: center; gap: 16px; min-height: 60px;
     }
-    ul li {
-      margin: 10px 0;
+    .brand { font-weight: 700; letter-spacing: -.01em; text-decoration: none; color: var(--ink); }
+    .nav { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav a {
+      color: var(--muted); text-decoration: none; font-size: 14px;
+      padding: 6px 10px; border-radius: 8px;
     }
-    a {
-      text-decoration: none;
-      color: #1a73e8;
+    .nav a:hover { background: var(--chip); color: var(--chip-ink); }
+
+    /* Hero */
+    .hero { padding: 56px 0 28px; }
+    .hero h1 { font-size: clamp(30px, 4.5vw, 44px); line-height: 1.1; margin: 0 0 12px; letter-spacing: -.02em; }
+    .hero p.lead { font-size: 18px; color: var(--muted); max-width: 720px; margin: 0 0 20px; }
+    .hero .links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink);
     }
-    a:hover {
-      text-decoration: underline;
+    .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+    .btn svg { width: 18px; height: 18px; }
+
+    details.about {
+      margin: 8px 0 0; max-width: 820px; color: var(--muted);
+    }
+    details.about summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+    details.about summary::-webkit-details-marker { display: none; }
+    details.about summary::after { content: " ↓"; }
+    details.about[open] summary::after { content: " ↑"; }
+    details.about p { margin: 10px 0 0; }
+
+    /* Sections */
+    section { padding: 28px 0 8px; }
+    section h2 {
+      font-size: 22px; margin: 0 0 4px; letter-spacing: -.01em;
+    }
+    section p.sub { margin: 0 0 18px; color: var(--muted); }
+
+    /* Card grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 22px;
+    }
+    .card {
+      position: relative;
+      display: flex; flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card:hover, .card:focus-within {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    }
+    .thumb {
+      aspect-ratio: 16 / 10;
+      background: #e9edf3;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    .thumb img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;
+      transition: transform .3s ease;
+    }
+    .card:hover .thumb img { transform: scale(1.03); }
+    .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .card h3 { margin: 0; font-size: 17px; line-height: 1.3; letter-spacing: -.01em; }
+    .card h3 a { color: inherit; text-decoration: none; }
+    /* stretch the title link over the whole card */
+    .card h3 a::after { content: ""; position: absolute; inset: 0; }
+    .card p { margin: 0; color: var(--muted); font-size: 14.5px; flex: 1; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .tag {
+      font-size: 12px; font-weight: 600; letter-spacing: .01em;
+      background: var(--chip); color: var(--chip-ink);
+      padding: 3px 9px; border-radius: 999px;
+    }
+    .extra { position: relative; z-index: 1; font-size: 13.5px; }
+    .extra a { font-weight: 600; text-decoration: none; }
+    .extra a:hover { text-decoration: underline; }
+
+    footer {
+      margin-top: 40px; padding: 28px 0 40px;
+      border-top: 1px solid var(--line);
+      color: var(--muted); font-size: 14px;
+    }
+    footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    @media (max-width: 520px) {
+      .hero { padding-top: 36px; }
+      .nav { display: none; }
     }
   </style>
 </head>
 <body>
-  <h1>Sample Portfolio for Beecher Adams</h1>
-  <a href="https://www.linkedin.com/in/beecher-adams-8387702/">LinkedIn Profile</a> 
-  <p>Welcome to my portfolio! Below you will find links to sample business analytics and data science projects I've worked on.</p>
-  <p>We are truly living in extraordinary times.  With the first appearance of ChatGPT in Nov 2022 and the continual improvement
-  of these LLMs, the productivity of the knowledge worker has been turbo-charged.  The assistance of ChatGPT
-  has dramatically improved how fast I can solve business problems using coding languages I know well such as R, Python, and SQL.  But it has
-  also allowed me to develop solutions in code I didn't know well such as web development (HTML, CSS, JavaScript, PHP, etc.).  
-  Luckily for us humans, these LLMs can't easily produce the final solution in a single-shot yet, but still often require painstaking back-and-forth effort
-  with the LLM helper to achieve the final result.  However, it will be fascinating to watch (and leverage) how AI evolves in the coming years.</p>
-  <ul>
-    <li><a href="module_map.html">Full Stack Web Application for Factory Module Map</a></li>
-    <li><a href="tableau_work.html">Sample Tableau Dashboards</a></li>
-    <li><a href="powerbi_work.html">Sample Power BI Dashboards</a></li>
-    <li><a href="jira_audit_log_summary.html">Sample Snowflake Snowpark Python Project</a></li>
-    <li><a href="automated_email_generation_summary.html">Python Script to Automate Weekly Summary of Team Accomplishments</a></li>
-    <li><a href="automated_powerpoint_chart_summary.html">Python Script to Automate Generation of a PowerPoint Chart</a></li>
-    <li><a href="web_site.html">Navigation Web Site for Tableau Server based Dashboards</a></li>
-    <li><a href="https://beecher92099.shinyapps.io/word_predictor/">Data Science Capstone: R Shiny App Next Word Predictor</a>
-      (<a href="https://rpubs.com/beecher92099/357274" target="_blank">Overview Presentation</a>)</li>
-    <li><a href="ML Proposal.pdf">Proposal Prepared for Customer Churn Analysis using ML</a></li>
-    <li><a href="project_python_foundations/project_python_foundations.html">Python Foundations Project</a></li>
-    <li><a href="project_machine_learning/AIML_ML_Project_full_code_notebook.html">Machine Learning Project: Decision Tree Classifier for Bank Personal Loan Campaign</a></li>
-    <li><a href="https://htmlpreview.github.io/?https://github.com/beecher92099/beecher92099.github.io/blob/main/AML_Project_LearnerNotebook_FullCode.html">Advanced Machine Learning Project: Credit Card Users Churn Prediction</a></li>
-    <li><a href="https://htmlpreview.github.io/?https://github.com/beecher92099/beecher92099.github.io/blob/main/NN_Project.html">Neural Network (TensorFlow) Project: Bank Customer Churn</a></li>
-    <li><a href="https://htmlpreview.github.io/?https://github.com/beecher92099/beecher92099.github.io/blob/main/CNN_Project.html">Computer Vision (CNN) Project: Plants Seedling Classification</a></li>
-    <li><a href="https://htmlpreview.github.io/?https://github.com/beecher92099/beecher92099.github.io/blob/main/NLP_Project_Full_Code_bpa.html">Natural Language Processing (NLP) Project: Stock Market News Sentiment Analysis and Summarization</a></li>
-    <li><a href="https://htmlpreview.github.io/?https://github.com/beecher92099/beecher92099.github.io/blob/main/Recommendation_System_Mini_Project.html">Recommendation System Project using Simple Popularity and Collaborative Filtering Methods</a></li>
-    <li><a href="model_deployment.html">Machine Learning Model Deployment using Docker and Kubernetes on Azure</a></li>
-    <li><a href="https://docs.google.com/document/d/e/2PACX-1vS0RaklC9oETUeTYk7WiW-g9pOV0CRa-Ugg0daUC_FVz5sP_ZbGRvxNbaV10YdIs1FYEggkW8SuBZcw/pub" target="_blank" rel="noopener noreferrer">Sample Product Requirements Document for Tennis and Pickleball Scoring Solution (work-in-progress)</a></li>
-  </ul>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top">Beecher Adams</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#ml">Machine Learning</a>
+      <a href="#apps">Apps &amp; Dashboards</a>
+      <a href="#automation">Data Engineering</a>
+      <a href="#docs">Documents</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top" class="wrap">
+  <section class="hero">
+    <h1>Business analytics &amp; data science portfolio</h1>
+    <p class="lead">
+      Sample projects spanning machine learning, deep learning, dashboards, data pipelines, and
+      full-stack web applications built with R, Python, SQL, and modern cloud tooling.
+    </p>
+    <div class="links">
+      <a class="btn primary" href="https://www.linkedin.com/in/beecher-adams-8387702/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.26 2.37 4.26 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+        LinkedIn
+      </a>
+      <a class="btn" href="https://github.com/beecher92099/beecher92099.github.io" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4 18.3 4.3 18.3 4.3c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+        Source on GitHub
+      </a>
+    </div>
+    <details class="about">
+      <summary>A note on working with AI assistants</summary>
+      <p>We are truly living in extraordinary times. With the first appearance of ChatGPT in November 2022 and the continual
+      improvement of these LLMs, the productivity of the knowledge worker has been turbo-charged. The assistance of ChatGPT
+      has dramatically improved how fast I can solve business problems using coding languages I know well such as R, Python,
+      and SQL. But it has also allowed me to develop solutions in code I didn't know well such as web development (HTML, CSS,
+      JavaScript, PHP, etc.).</p>
+      <p>Luckily for us humans, these LLMs can't easily produce the final solution in a single shot yet, and still often require
+      painstaking back-and-forth effort with the LLM helper to achieve the final result. However, it will be fascinating to
+      watch (and leverage) how AI evolves in the coming years.</p>
+    </details>
+  </section>
+
+  <!-- ===================== Machine Learning ===================== -->
+  <section id="ml">
+    <h2>Machine learning &amp; AI</h2>
+    <p class="sub">End-to-end notebooks covering classical ML, deep learning, NLP, and recommender systems, plus a cloud deployment.</p>
+    <div class="grid">
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/cnn_project.jpg" alt="Grid of plant seedling photos labeled by species" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="CNN_Project.html">Plant Seedling Classification</a></h3>
+          <p>Convolutional neural network that classifies seedling images into 12 species to help automate weed control.</p>
+          <div class="tags"><span class="tag">Computer Vision</span><span class="tag">TensorFlow</span><span class="tag">CNN</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/nlp_project.jpg" alt="Distribution of news article character counts" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="NLP_Project_Full_Code_bpa.html">Stock News Sentiment &amp; Summarization</a></h3>
+          <p>NLP pipeline that scores market news sentiment and generates summaries to support trading decisions.</p>
+          <div class="tags"><span class="tag">NLP</span><span class="tag">Transformers</span><span class="tag">Python</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/nn_project.jpg" alt="Stacked bar chart of customer churn by country" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="NN_Project.html">Bank Customer Churn (Neural Network)</a></h3>
+          <p>TensorFlow neural network predicting which bank customers are likely to leave, with tuning and class balancing.</p>
+          <div class="tags"><span class="tag">Deep Learning</span><span class="tag">TensorFlow</span><span class="tag">Classification</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/aml_project.jpg" alt="Bar chart of credit card customers by income category" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="AML_Project_LearnerNotebook_FullCode.html">Credit Card Churn Prediction</a></h3>
+          <p>Advanced ML comparing ensemble models and oversampling strategies to predict credit card customer attrition.</p>
+          <div class="tags"><span class="tag">Ensembles</span><span class="tag">Hyperparameter Tuning</span><span class="tag">scikit-learn</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/ml_project.jpg" alt="Box plots of bank customer features" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="project_machine_learning/AIML_ML_Project_full_code_notebook.html">Personal Loan Campaign Classifier</a></h3>
+          <p>Decision tree model identifying which bank customers are most likely to accept a personal loan offer.</p>
+          <div class="tags"><span class="tag">Decision Trees</span><span class="tag">EDA</span><span class="tag">scikit-learn</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/recsys_project.jpg" alt="Bar chart of product rating distribution" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="Recommendation_System_Mini_Project.html">Product Recommendation System</a></h3>
+          <p>Popularity-based and collaborative filtering recommenders built on millions of product ratings.</p>
+          <div class="tags"><span class="tag">Recommenders</span><span class="tag">Collaborative Filtering</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/model_deployment.jpg" alt="Iris species predictor web app" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="model_deployment.html">ML Model Deployment on Azure</a></h3>
+          <p>Iris classifier served with Flask, containerized with Docker, and deployed to Kubernetes on Azure.</p>
+          <div class="tags"><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Azure</span><span class="tag">Flask</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/shiny_word_predictor.svg" alt="Next word predictor app mockup" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="https://beecher92099.shinyapps.io/word_predictor/" target="_blank" rel="noopener noreferrer">Next Word Predictor</a></h3>
+          <p>Data Science Capstone: an R Shiny app that predicts the next word from an n-gram language model.</p>
+          <div class="tags"><span class="tag">R</span><span class="tag">Shiny</span><span class="tag">NLP</span></div>
+          <div class="extra"><a href="https://rpubs.com/beecher92099/357274" target="_blank" rel="noopener noreferrer">Overview presentation →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/python_foundations.jpg" alt="Histogram of food preparation time" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="project_python_foundations/project_python_foundations.html">Food Delivery Data Analysis</a></h3>
+          <p>Python Foundations project: exploratory analysis of restaurant order data with pandas and seaborn.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">pandas</span><span class="tag">EDA</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== Apps & Dashboards ===================== -->
+  <section id="apps">
+    <h2>Applications &amp; dashboards</h2>
+    <p class="sub">Full-stack tools and business intelligence work.</p>
+    <div class="grid">
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/module_map.jpg" alt="Factory module map web application" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="module_map.html">Factory Module Map</a></h3>
+          <p>Full-stack app for tracking and dragging factory modules across site locations, with time travel and undo.</p>
+          <div class="tags"><span class="tag">Full Stack</span><span class="tag">JavaScript</span><span class="tag">Azure SQL</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/tableau.jpg" alt="Bookings summary dashboard mockup" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="tableau_work.html">Tableau Dashboards</a></h3>
+          <p>Mockups of sales bookings, forecast linearity, and pipeline dashboards built for a previous employer.</p>
+          <div class="tags"><span class="tag">Tableau</span><span class="tag">Sales Analytics</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/powerbi.jpg" alt="Super Store executive summary dashboard" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="powerbi_work.html">Power BI Dashboards</a></h3>
+          <p>Executive summary dashboard on the Super Store dataset with a multi-table data model and DAX measures.</p>
+          <div class="tags"><span class="tag">Power BI</span><span class="tag">DAX</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/web_site.svg" alt="Dashboard navigation site illustration" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="web_site.html">Tableau Navigation Portal</a></h3>
+          <p>Self-hosted web front end on Linux and Apache for navigating Tableau Server dashboards.</p>
+          <div class="tags"><span class="tag">Web</span><span class="tag">Linux</span><span class="tag">Apache</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== Data Engineering & Automation ===================== -->
+  <section id="automation">
+    <h2>Data engineering &amp; automation</h2>
+    <p class="sub">Pipelines and scripts that remove manual reporting work.</p>
+    <div class="grid">
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/jira.jpg" alt="Box plot of Epic process step durations" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="jira_audit_log_summary.html">Jira Audit Log Pipeline</a></h3>
+          <p>Snowflake Snowpark job that parses Jira audit logs into a view of Epic process step transitions over time.</p>
+          <div class="tags"><span class="tag">Snowflake</span><span class="tag">Snowpark</span><span class="tag">Python</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/email_script.svg" alt="Weekly accomplishments email illustration" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="automated_email_generation_summary.html">Weekly Summary Email Generator</a></h3>
+          <p>Python script that merges Jira Epic data from SharePoint and renders a formatted HTML status email.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Automation</span><span class="tag">HTML</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/pptx_script.svg" alt="PowerPoint heatmap table illustration" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="automated_powerpoint_chart_summary.html">Automated PowerPoint Chart</a></h3>
+          <p>Pulls active Epics from Snowflake and builds a color-coded priority heatmap slide with python-pptx.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Snowflake</span><span class="tag">python-pptx</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== Documents ===================== -->
+  <section id="docs">
+    <h2>Proposals &amp; documents</h2>
+    <p class="sub">Written work: planning, requirements, and proposals.</p>
+    <div class="grid">
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/ml_proposal.jpg" alt="Title slide of machine learning proposal" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="ML%20Proposal.pdf" target="_blank" rel="noopener noreferrer">ML Proposal for Sales Revenue Growth</a></h3>
+          <p>Proposal for developing machine learning models to increase sales revenue through churn and upsell analysis.</p>
+          <div class="tags"><span class="tag">PDF</span><span class="tag">Strategy</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb"><img src="images/thumbs/prd_tennis.jpg" alt="Product requirements document excerpt" loading="lazy"></div>
+        <div class="body">
+          <h3><a href="https://docs.google.com/document/d/e/2PACX-1vS0RaklC9oETUeTYk7WiW-g9pOV0CRa-Ugg0daUC_FVz5sP_ZbGRvxNbaV10YdIs1FYEggkW8SuBZcw/pub" target="_blank" rel="noopener noreferrer">Tennis &amp; Pickleball Scoring PRD</a></h3>
+          <p>Work-in-progress product requirements document for a court-side score tracking solution.</p>
+          <div class="tags"><span class="tag">Product</span><span class="tag">Requirements</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Beecher Adams</span>
+    <span><a href="https://www.linkedin.com/in/beecher-adams-8387702/" target="_blank" rel="noopener noreferrer">LinkedIn</a> · <a href="https://github.com/beecher92099" target="_blank" rel="noopener noreferrer">GitHub</a></span>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
-
